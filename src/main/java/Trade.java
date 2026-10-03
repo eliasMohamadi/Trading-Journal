@@ -1,11 +1,24 @@
 public class Trade {
-    private String instrument;
+    
+    public enum Instrument{
+        MNQ,
+        NQ,
+        MES,
+        ES,
+        GC,
+        MGC,
+        MYM,
+        YM
+    }
     
     public enum Direction{
         LONG,
         SHORT
     }
+    
+    //enums
     private Direction direction;
+    private Instrument instrument;
     
     private double entryPrice;
     private double exitPrice;
@@ -13,7 +26,7 @@ public class Trade {
     private int numContracts;
     private String emotions;
     
-    public Trade(String instrument, Direction direction, double entryPrice,
+    public Trade(Instrument instrument, Direction direction, double entryPrice,
                  double exitPrice, double stopLoss, int numContracts, String emotions){
         
         this.instrument = instrument;
@@ -46,7 +59,7 @@ public class Trade {
         return numContracts;
     }
     
-    public String getInstrument() {
+    public Instrument getInstrument() {
         return instrument;
     }
     
@@ -57,30 +70,44 @@ public class Trade {
     
     //--Setters
     public void setDirection(Direction direction) {
-        this.direction = direction;
+        if (direction == Direction.LONG || direction == Direction.SHORT) {
+            this.direction = direction;
+        }
     }
     
     public void setStopLoss(double stopLoss) {
-        this.stopLoss = stopLoss;
+            if(stopLoss >= 0){
+                this.stopLoss = stopLoss;
+            }
     }
     
     public void setEntryPrice(double entryPrice) {
-        this.entryPrice = entryPrice;
+        if(entryPrice > 0) {
+            this.entryPrice = entryPrice;
+        }
     }
     
     public void setExitPrice(double exitPrice) {
-        this.exitPrice = exitPrice;
+        if (exitPrice > 0) {
+            this.exitPrice = exitPrice;
+        }
     }
     
     public void setNumContracts(int numContracts) {
-        this.numContracts = numContracts;
+        if (numContracts > 0) {
+            this.numContracts = numContracts;
+        }
     }
     
-    public void setInstrument(String instrument) {
-        this.instrument = instrument;
+    public void setInstrument(Instrument instrument) {
+        if (instrument != null) {
+            this.instrument = instrument;
+        }
     }
     
     public void setEmotions(String emotion) {
-        this.emotions = emotion;
+        if((emotion != null) &&( !emotion.isBlank())){
+            this.emotions = emotion;
+        }
     }
 }
