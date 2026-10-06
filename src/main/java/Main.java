@@ -9,14 +9,17 @@ public class Main {
         
         Scanner sc = new Scanner(System.in);
         int userChoice = 0;
-        //to keep track of trades
-        int tradeNumber = 0;
+        
         //for case 2, determines which trade to access
         int tradeAccesser;
         Trade.Direction direction = null;
         Trade.Instrument instrument = null;
-        //Array to store the trades
-        Trade[] trades = new Trade[100];
+        
+        //FileManager object this is to do the loading and reading methods from the trades saved in the "trades.txt" file
+        TradeFileManager fileManager = new TradeFileManager();
+        //ArrayList to load old trades and store new trades
+        ArrayList<Trade> trades = fileManager.loadTrade();
+        
         //welcome msg
         System.out.println("Welcome to Elias's Java Trading-Journal :)");
         
@@ -62,12 +65,16 @@ public class Main {
                     System.out.print("Emotions: ");
                     String emotions = sc.nextLine();
                     
-                    trades[tradeNumber] = new Trade(instrument, direction, entryPrice, exitPrice, stoploss, numContracts, emotions);
-                    tradeNumber += 1;
+                    //creates the trade object
+                    Trade trade = new Trade(instrument, direction, entryPrice, exitPrice, stoploss, numContracts, emotions);
+                    //adds the trade object to the ArrayList
+                    trades.add(trade);
+                    //saves the trade into a text file
+                    fileManager.saveTrade(trade);
                     break;
                     
                 case 2:
-                    if(tradeNumber == 0){
+                    if(trades.isEmpty()){
                         System.out.println("Sorry there are no trades yet.");
                     } else {
                         System.out.print("Enter the trade number that you wish to access: ");
@@ -75,12 +82,12 @@ public class Main {
                         
                         System.out.println();
                         
-                        if(tradeAccesser > tradeNumber){
+                        if(tradeAccesser > trades.size()){
                             System.out.println("Sorry but you haven't logged " +tradeAccesser+ " trades yet.");
                         } else {
-                            System.out.println("You used a total of " +trades[tradeAccesser-1].getNumContracts()+ " contracts.");
-                            System.out.println("You held your " +trades[tradeAccesser-1].getDirection()+ " to the price of $" +trades[tradeAccesser-1].getExitPrice()+ ".");
-                            System.out.println("Resulting in a total PnL of $" +trades[tradeAccesser-1].calculatePnL());
+                            System.out.println("You used a total of " +trades.get(tradeAccesser - 1).getNumContracts()+ " contracts.");
+                            System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " to the price of $" +trades.get(tradeAccesser - 1).getExitPrice()+ ".");
+                            System.out.println("Resulting in a total PnL of $" +trades.get(tradeAccesser - 1).calculatePnL());
                         }
                     }
                     break;
