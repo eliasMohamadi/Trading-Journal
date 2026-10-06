@@ -1,21 +1,37 @@
+//Elias Mohamadi
+
+//Trade Class that stores all the data for the users trades
 public class Trade {
     
+    //defining the enums
     public enum Instrument{
-        MNQ,
-        NQ,
-        MES,
-        ES,
-        GC,
-        MGC,
-        MYM,
-        YM
+        MNQ(2),
+        NQ(20),
+        MES(5),
+        ES(50),
+        GC(100),
+        MGC(10),
+        MYM(0.5),
+        YM(5);
+        
+        private final double valuePerPoint;
+        
+        Instrument(double valuePerPoint){
+            this.valuePerPoint = valuePerPoint;
+        }
+        
+        public double getValuePerPoint(){
+            return valuePerPoint;
+        }
     }
+    
     
     public enum Direction{
         LONG,
         SHORT
     }
     
+    //field declaration
     //enums
     private Direction direction;
     private Instrument instrument;
@@ -26,8 +42,10 @@ public class Trade {
     private int numContracts;
     private String emotions;
     
-    public Trade(Instrument instrument, Direction direction, double entryPrice,
-                 double exitPrice, double stopLoss, int numContracts, String emotions){
+    //Constructor
+    public Trade(Instrument instrument, Direction direction, double entryPrice, double exitPrice,
+                 double stopLoss, int numContracts, String emotions)
+    {
         
         this.instrument = instrument;
         this.direction = direction;
@@ -39,36 +57,54 @@ public class Trade {
         
     }
     
-    public Direction getDirection() {
+    //Getters
+    public Direction getDirection()
+    {
         return direction;
     }
     
-    public double getStopLoss() {
+    public double getStopLoss()
+    {
         return stopLoss;
     }
     
-    public double getEntryPrice() {
+    public double getEntryPrice()
+    {
         return entryPrice;
     }
     
-    public double getExitPrice() {
+    public double getExitPrice()
+    {
         return exitPrice;
     }
     
-    public int getNumContracts() {
+    public int getNumContracts()
+    {
         return numContracts;
     }
     
-    public Instrument getInstrument() {
+    public Instrument getInstrument()
+    {
         return instrument;
     }
     
-    public String getEmotions() {
+    public String getEmotions()
+    {
         return emotions;
     }
     
+    public double calculatePnL(){
+        if(getDirection() == Direction.LONG)
+        {
+            return numContracts * (exitPrice - entryPrice) * instrument.valuePerPoint;
+        }
+        else
+        {
+            return numContracts * (entryPrice - exitPrice) * instrument.valuePerPoint;
+        }
+    }
     
-    //--Setters
+    //--Setters + Validators
     public void setDirection(Direction direction) {
         if (direction == Direction.LONG || direction == Direction.SHORT) {
             this.direction = direction;
@@ -76,9 +112,14 @@ public class Trade {
     }
     
     public void setStopLoss(double stopLoss) {
-            if(stopLoss >= 0){
+        if (stopLoss >= 0) {
+            if ((stopLoss > entryPrice) && (direction == Direction.SHORT)) {
                 this.stopLoss = stopLoss;
             }
+            if ((stopLoss < entryPrice) && (direction == Direction.LONG)) {
+                this.stopLoss = stopLoss;
+            }
+        }
     }
     
     public void setEntryPrice(double entryPrice) {
@@ -106,7 +147,7 @@ public class Trade {
     }
     
     public void setEmotions(String emotion) {
-        if((emotion != null) &&( !emotion.isBlank())){
+        if((emotion != null) && (!emotion.isBlank())){
             this.emotions = emotion;
         }
     }
