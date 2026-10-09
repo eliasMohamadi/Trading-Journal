@@ -10,10 +10,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int userChoice = 0;
         
-        //for case 2, determines which trade to access
-        int tradeAccesser;
-        Trade.Direction direction = null;
-        Trade.Instrument instrument = null;
+        //variable(s) + broad scope
         
         //FileManager object this is to do the loading and reading methods from the trades saved in the "trades.txt" file
         TradeFileManager fileManager = new TradeFileManager();
@@ -37,33 +34,133 @@ public class Main {
             
             //switch case to match users menu choice
             switch(userChoice){
-                case 1:
+                case 1: {
+                    //variable(s) + scope
+                    Trade.Direction direction = null;
+                    Trade.Instrument instrument = null;
+                    double entryPrice = 0;
+                    double exitPrice = 0;
+                    double stoploss = 0;
+                    int numContracts = 0;
+                    String emotions = "";
+                    
                     System.out.println("Please fill the following.\n");
-                    System.out.print("Instrument: ");
-                    String instrumentString = sc.nextLine();
                     
-                    instrument = Trade.Instrument.valueOf(instrumentString.toUpperCase());
+                    boolean validInstrument = false;
+                    while (!validInstrument) {
+                        try {
+                            System.out.print("Instrument: ");
+                            String instrumentString = sc.nextLine();
+                            
+                            instrument = Trade.Instrument.valueOf(instrumentString.toUpperCase());
+                            
+                            //update valid input
+                            validInstrument = true;
+                        } catch (IllegalArgumentException e) { //error handling
+                            System.out.print("Invalid instrument. Please try again.\n");
+                        }
+                    }
                     
-                    System.out.print("Long or Short? ");
-                    String directionString = sc.nextLine();
+                    boolean validDirection = false;
+                    while (!validDirection) {
+                        try {
+                            System.out.print("Long or Short? ");
+                            String directionString = sc.nextLine();
+                            
+                            direction = Trade.Direction.valueOf(directionString.toUpperCase());
+                            
+                            //update valid input
+                            validDirection = true;
+                        } catch (IllegalArgumentException e) { //error handling
+                            System.out.print("Invalid direction. Please try again.\n");
+                        }
+                    }
                     
-                    direction = Trade.Direction.valueOf(directionString.toUpperCase());
+                    boolean validEntryPrice = false;
+                    while (!validEntryPrice) {
+                        try {
+                            System.out.print("Entry price: ");
+                            entryPrice = sc.nextDouble();
+                            if (entryPrice >= 1) {
+                                //update valid input
+                                validEntryPrice = true;
+                            } else {
+                                System.out.println("Price must be at least 1. Try again.");
+                            }
+                        } catch (InputMismatchException e) { //error handling
+                            System.out.println("Invalid entry price. Please try again.");
+                            sc.nextLine();
+                        }
+                    }
                     
-                    System.out.print("Entry price: ");
-                    double entryPrice = sc.nextDouble();
+                    boolean validExitPrice = false;
+                    while (!validExitPrice) {
+                        try {
+                            System.out.print("Exit price: ");
+                            exitPrice = sc.nextDouble();
+                            if (exitPrice >= 1) {
+                                //update valid input
+                                validExitPrice = true;
+                            } else {
+                                System.out.println("Price must be at least 1. Try again.");
+                            }
+                            
+                        } catch (InputMismatchException e) { //error handling
+                            System.out.println("Invalid exit price. Please try again.");
+                            sc.nextLine();
+                        }
+                    }
                     
-                    System.out.print("Exit price: ");
-                    double exitPrice = sc.nextDouble();
+                    boolean validStopLoss = false;
+                    while (!validStopLoss) {
+                        try {
+                            System.out.print("Stoploss: ");
+                            stoploss = sc.nextDouble();
+                            
+                            if ((stoploss > entryPrice && direction == Trade.Direction.SHORT) || (stoploss < entryPrice && direction == Trade.Direction.LONG)) {
+                                
+                                if (stoploss > 0) {
+                                    validStopLoss = true;
+                                } else {
+                                    System.out.println("Stoploss must be greater than 0.");
+                                }
+                            } else {
+                                System.out.println("Invalid stoploss price. Please try again.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid stoploss. Please try again.");
+                            sc.nextLine();
+                        }
+                    }
                     
-                    System.out.print("Stoploss: ");
-                    double stoploss = sc.nextDouble();
-                    
-                    System.out.print("Number of contracts: ");
-                    int numContracts = sc.nextInt();
+                    boolean validNumContracts = false;
+                    while (!validNumContracts) {
+                        try {
+                            System.out.print("Number of contracts: ");
+                            numContracts = sc.nextInt();
+                            if (numContracts >= 1) {
+                                validNumContracts = true;
+                            } else {
+                                System.out.println("Invalid number of contracts. Please try again.");
+                            }
+                            
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid number of contracts. Please try again.");
+                            sc.nextLine();
+                        }
+                    }
                     sc.nextLine();
                     
-                    System.out.print("Emotions: ");
-                    String emotions = sc.nextLine();
+                    boolean validEmotions = false;
+                    while (!validEmotions) {
+                        System.out.print("Emotions: ");
+                        emotions = sc.nextLine();
+                        if (!emotions.isBlank()) {
+                            validEmotions = true;
+                        } else {
+                            System.out.println("Enter a meaningful emotion.");
+                        }
+                    }
                     
                     //creates the trade object
                     Trade trade = new Trade(instrument, direction, entryPrice, exitPrice, stoploss, numContracts, emotions);
@@ -72,8 +169,10 @@ public class Main {
                     //saves the trade into a text file
                     fileManager.saveTrade(trade);
                     break;
-                    
+                }
                 case 2:
+                    int tradeAccesser;
+                    
                     if(trades.isEmpty()){
                         System.out.println("Sorry there are no trades yet.");
                     } else {
@@ -82,12 +181,14 @@ public class Main {
                         
                         System.out.println();
                         
-                        if(tradeAccesser > trades.size()){
+                        if(tradeAccesser > trades.size() || tradeAccesser < 1){
                             System.out.println("Sorry but you haven't logged " +tradeAccesser+ " trades yet.");
                         } else {
-                            System.out.println("You used a total of " +trades.get(tradeAccesser - 1).getNumContracts()+ " contracts.");
-                            System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " to the price of $" +trades.get(tradeAccesser - 1).getExitPrice()+ ".");
-                            System.out.println("Resulting in a total PnL of $" +trades.get(tradeAccesser - 1).calculatePnL());
+                            Trade selectedTrade = trades.get(tradeAccesser - 1);
+                            System.out.println("Instrument: " +selectedTrade.getInstrument());
+                            System.out.println("You used a total of " +selectedTrade.getNumContracts()+ " contracts.");
+                            System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " to the price of $" +selectedTrade.getExitPrice()+ ".");
+                            System.out.println("Resulting in a total PnL of $" +selectedTrade.calculatePnL());
                         }
                     }
                     break;
