@@ -16,16 +16,23 @@ public class Main {
         TradeFileManager fileManager = new TradeFileManager();
         //ArrayList to load old trades and store new trades
         ArrayList<Trade> trades = fileManager.loadTrade();
+        //Initialize TradeStatistics
+        TradeStatistics stats = new TradeStatistics();
         
         //welcome msg
         System.out.println("Welcome to Elias's Java Trading-Journal :)");
         
         //menu loop
-        while(userChoice != 3){
+        while(userChoice != 8){
             System.out.print("\n---MENU---\n" +
                     "1. Log new trade\n" +
                     "2. View trade(s)\n" +
-                    "3. Turn Off journal\n" +
+                    "3. Total Trades\n" +
+                    "4. Total Profit & Loss\n" +
+                    "5. Winrate\n" +
+                    "6. Average P&L\n" +
+                    "7. Best and Worst Trade\n" +
+                    "8. Turn Off journal\n" +
                     "Enter option: ");
             
             userChoice = sc.nextInt();
@@ -187,13 +194,46 @@ public class Main {
                             Trade selectedTrade = trades.get(tradeAccesser - 1);
                             System.out.println("Instrument: " +selectedTrade.getInstrument());
                             System.out.println("You used a total of " +selectedTrade.getNumContracts()+ " contracts.");
-                            System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " to the price of $" +selectedTrade.getExitPrice()+ ".");
+                            System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " from the price of $"+selectedTrade.getEntryPrice() +" to the price of $" +selectedTrade.getExitPrice()+ ".");
                             System.out.println("Resulting in a total PnL of $" +selectedTrade.calculatePnL());
                         }
                     }
                     break;
-                    
+                
                 case 3:
+                    System.out.println("Total Trades Logged: " +trades.size());
+                    break;
+                    
+                case 4:
+                    System.out.println("Total PnL: $" +stats.totalPnl(trades));
+                    break;
+                    
+                case 5:
+                    if(trades.isEmpty()){
+                        System.out.println("Your list is empty.");
+                    } else{
+                        System.out.println("Your winrate is " +stats.winRate(trades)+ "%");
+                    }
+                    break;
+                    
+                case 6:
+                    if(trades.isEmpty()){
+                        System.out.println("Your list is empty.");
+                    } else {
+                        System.out.println("Your average trade PnL is $ " +stats.averagePnl(trades));
+                    }
+                    break;
+                
+                case 7:
+                    if (trades.isEmpty()) {
+                        System.out.println("Your list is empty.");
+                    } else {
+                        System.out.println("Best Trade: $" + stats.bestTrade(trades));
+                        System.out.println("Worst Trade: $" + stats.worstTrade(trades));
+                    }
+                    break;
+                    
+                case 8:
                     System.out.println("Shutting down...");
                     break;
                     
