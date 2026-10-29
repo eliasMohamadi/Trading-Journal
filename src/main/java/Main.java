@@ -183,19 +183,23 @@ public class Main {
                     if(trades.isEmpty()){
                         System.out.println("Sorry there are no trades yet.");
                     } else {
-                        System.out.print("Enter the trade number that you wish to access: ");
-                        tradeAccesser = sc.nextInt();
-                        
-                        System.out.println();
-                        
-                        if(tradeAccesser > trades.size() || tradeAccesser < 1){
-                            System.out.println("Sorry but you haven't logged " +tradeAccesser+ " trades yet.");
-                        } else {
-                            Trade selectedTrade = trades.get(tradeAccesser - 1);
-                            System.out.println("Instrument: " +selectedTrade.getInstrument());
-                            System.out.println("You used a total of " +selectedTrade.getNumContracts()+ " contracts.");
-                            System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " from the price of $"+selectedTrade.getEntryPrice() +" to the price of $" +selectedTrade.getExitPrice()+ ".");
-                            System.out.println("Resulting in a total PnL of $" +selectedTrade.calculatePnL());
+                        try {
+                            System.out.print("Enter the trade number that you wish to access: ");
+                            tradeAccesser = sc.nextInt();
+                            
+                            System.out.println();
+                            
+                            if(tradeAccesser > trades.size() || tradeAccesser < 1){
+                                System.out.println("Sorry but you haven't logged " +tradeAccesser+ " trades yet.");
+                            } else {
+                                Trade selectedTrade = trades.get(tradeAccesser - 1);
+                                System.out.println("Instrument: " +selectedTrade.getInstrument());
+                                System.out.println("You used a total of " +selectedTrade.getNumContracts()+ " contracts.");
+                                System.out.println("You held your " +trades.get(tradeAccesser - 1).getDirection()+ " from the price of $"+selectedTrade.getEntryPrice() +" to the price of $" +selectedTrade.getExitPrice()+ ".");
+                                System.out.println("Resulting in a total PnL of $" +selectedTrade.calculatePnL());
+                            }
+                        } catch(InputMismatchException e){
+                             System.out.println("Invalid input. Please try again. ");
                         }
                     }
                     break;

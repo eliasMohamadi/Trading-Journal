@@ -36,3 +36,5 @@ build/
 
 ### Trading Journal Data ###
 trades.txt
+CLAUDE.md
+.mcp.json
